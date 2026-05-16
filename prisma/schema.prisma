@@ -5,3 +5,99 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  @@map("users")
+
+  id             String    @id @default(uuid()) @db.Uuid
+
+  fullName       String
+  username       String    @unique
+
+  profilePicture String?
+  bio            String?
+
+  gender         Gender?
+  dateOfBirth    DateTime
+
+  email         String?
+  phoneNumber   String
+
+  isActive       Boolean   @default(true)
+  isBlocked      Boolean   @default(false)
+
+  isOnline       Boolean   @default(false)
+  lastSeenAt     DateTime?
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  authProviders  UserAuthProvider[]
+  sessions       UserSession[]
+}
+
+model UserAuthProvider {
+  @@map("user_auth_providers")
+
+  id            String       @id @default(uuid()) @db.Uuid
+
+  userId        String       @db.Uuid
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  provider      AuthProvider
+
+  providerId    String?
+
+  isVerified    Boolean      @default(true)
+
+  createdAt     DateTime     @default(now())
+
+  @@unique([provider, providerId])
+}
+
+model UserSession {
+  @@map("user_sessions")
+
+  id             String    @id @default(uuid()) @db.Uuid
+
+  userId         String    @db.Uuid
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  refreshToken   String    @unique
+
+  deviceId       String?
+  deviceName     String?
+  deviceType     String?
+
+  platform       String?
+  appVersion     String?
+  osVersion      String?
+
+  fcmToken       String?
+
+  ipAddress      String?
+  userAgent      String?
+
+  isActive       Boolean   @default(true)
+
+  expiresAt      DateTime
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([refreshToken])
+}
+
+enum AuthProvider {
+  PHONE
+  GOOGLE
+  FACEBOOK
+  APPLE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
