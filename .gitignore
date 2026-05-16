@@ -4,6 +4,7 @@ node_modules/
 # Build files
 dist/
 build/
+generated/
 
 # Logs
 logs/
@@ -54,3 +55,4 @@ pids/
 
 # Optional eslint cache
 .eslintcache
+/src/generated/prisma
