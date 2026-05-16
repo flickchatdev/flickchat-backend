@@ -7,8 +7,18 @@ const options: swaggerJsdoc.Options = {
     info: {
       title: "FlickChat API",
       version: "1.0.0",
-      description: "FlickChat Backend API Documentation",
+      description:
+        "FlickChat Backend API Documentation.\n\n" +
+        "**Real-time (Socket.io):** REST endpoints cannot open a WebSocket from Swagger UI. " +
+        "Use `GET /socket/health` to confirm Socket.io is running, then connect with " +
+        "[socket.io-client](https://socket.io/docs/v4/client-api/) to the same base URL as this API.",
     },
+
+    tags: [
+      { name: "Health", description: "Server health checks" },
+      { name: "Socket", description: "Socket.io status (REST probe)" },
+      { name: "Authentication", description: "Login and OTP" },
+    ],
 
     servers: [
       {
