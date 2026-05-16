@@ -32,8 +32,11 @@ model User {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  authProviders  UserAuthProvider[]
-  sessions       UserSession[]
+  authProviders     UserAuthProvider[]
+  sessions          UserSession[]
+  chatParticipants  ChatParticipant[]
+  chatsCreated      Chat[]              @relation("ChatCreatedBy")
+  sentMessages      Message[]
 }
 
 model UserAuthProvider {
@@ -100,4 +103,111 @@ enum Gender {
   MALE
   FEMALE
   OTHER
+}
+
+model Chat {
+  @@map("chats")
+
+  id            String    @id @default(uuid()) @db.Uuid
+
+  type          ChatType  @default(DIRECT)
+
+  name          String?
+  imageUrl      String?
+
+  /// Sorted "uuidA:uuidB" for DIRECT chats — enforces one conversation per pair
+  directKey     String?   @unique
+
+  createdById   String?   @db.Uuid
+  createdBy     User?     @relation("ChatCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+
+  lastMessageAt DateTime?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  participants  ChatParticipant[]
+  messages      Message[]
+
+  @@index([type])
+  @@index([lastMessageAt])
+}
+
+model ChatParticipant {
+  @@map("chat_participants")
+
+  id           String    @id @default(uuid()) @db.Uuid
+
+  chatId       String    @db.Uuid
+  chat         Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  userId       String    @db.Uuid
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  role         ChatRole  @default(MEMBER)
+
+  joinedAt     DateTime  @default(now())
+  leftAt       DateTime?
+
+  lastReadAt   DateTime?
+  isMuted      Boolean   @default(false)
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@unique([chatId, userId])
+  @@index([userId])
+}
+
+model Message {
+  @@map("messages")
+
+  id          String        @id @default(uuid()) @db.Uuid
+
+  chatId      String        @db.Uuid
+  chat        Chat          @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  senderId    String        @db.Uuid
+  sender      User          @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  type        MessageType   @default(TEXT)
+
+  content     String?
+  mediaUrl    String?
+  mimeType    String?
+  fileName    String?
+  fileSize    Int?
+
+  replyToId   String?       @db.Uuid
+  replyTo     Message?      @relation("MessageReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies     Message[]     @relation("MessageReplies")
+
+  isEdited    Boolean       @default(false)
+  deletedAt   DateTime?
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([chatId, createdAt])
+  @@index([senderId])
+}
+
+enum ChatType {
+  DIRECT
+  GROUP
+}
+
+enum ChatRole {
+  ADMIN
+  MEMBER
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  FILE
+  STICKER
+  SYSTEM
 }

@@ -6,6 +6,9 @@ import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors";
 import path from "path";
+import authenticationRoute from "./routes/authentication.route.js";
+import socketRoute from "./routes/socket.route.js";
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 
@@ -37,7 +40,9 @@ app.get("/", (_, res) => {
     success: true,
     message: RESPONSE_MESSAGE.SERVER_RUNNING,
     health: "/health",
+    socketHealth: "/socket/health",
     docs: "/api-docs",
+    socket: "ws://same-host",
     timestamp: new Date().toISOString(),
   });
 });
@@ -73,5 +78,10 @@ app.get("/health", (_, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+app.use("/api/auth", authenticationRoute);
+app.use("/socket", socketRoute);
+
+app.use(errorHandler);
 
 export default app;
