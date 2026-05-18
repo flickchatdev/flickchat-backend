@@ -12,7 +12,12 @@ const router = Router();
  *       Send the **Google ID token** from the mobile/web Google Sign-In SDK.
  *       The server verifies it with Google, then creates or logs in the user and returns JWT tokens.
  *     tags: [Authentication]
-
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
  *             required: [idToken]
  *             properties:
  *               idToken:
