@@ -9,11 +9,19 @@ class AuthenticationController {
     const { phoneNumber, countryCode } = req.body;
 
     if (!phoneNumber || typeof phoneNumber !== "string") {
-      throw new AppError(400, RESPONSE_MESSAGE.PHONE_NUMBER_REQUIRED, "VALIDATION_ERROR");
+      throw new AppError(
+        400,
+        RESPONSE_MESSAGE.PHONE_NUMBER_REQUIRED,
+        "VALIDATION_ERROR",
+      );
     }
 
     if (countryCode !== undefined && typeof countryCode !== "string") {
-      throw new AppError(400, RESPONSE_MESSAGE.COUNTRY_CODE_INVALID_TYPE, "VALIDATION_ERROR");
+      throw new AppError(
+        400,
+        RESPONSE_MESSAGE.COUNTRY_CODE_INVALID_TYPE,
+        "VALIDATION_ERROR",
+      );
     }
 
     const data = await authenticationService.sendOtp(phoneNumber, countryCode);
@@ -26,10 +34,28 @@ class AuthenticationController {
   });
 
   verifyOtp = asyncHandler(async (req: Request, res: Response) => {
-    const { phoneNumber, otp, verificationId, countryCode } = req.body;
+    const {
+      phoneNumber,
+      otp,
+      verificationId,
+      countryCode,
+      provider,
+      token,
+      fcmToken,
+      deviceId,
+      deviceName,
+      deviceType,
+      platform,
+      appVersion,
+      osVersion,
+    } = req.body;
 
     if (!phoneNumber || typeof phoneNumber !== "string") {
-      throw new AppError(400, RESPONSE_MESSAGE.PHONE_NUMBER_REQUIRED, "VALIDATION_ERROR");
+      throw new AppError(
+        400,
+        RESPONSE_MESSAGE.PHONE_NUMBER_REQUIRED,
+        "VALIDATION_ERROR",
+      );
     }
 
     const data = await authenticationService.verifyOtp(
@@ -37,6 +63,21 @@ class AuthenticationController {
       otp,
       verificationId,
       countryCode,
+      {
+        fcmToken,
+        deviceId,
+        deviceName,
+        deviceType,
+        platform,
+        appVersion,
+        osVersion,
+        ipAddress: req.ip,
+        userAgent: req.headers["user-agent"],
+      },
+      {
+        provider,
+        token,
+      },
     );
 
     res.status(200).json({
@@ -46,16 +87,83 @@ class AuthenticationController {
     });
   });
 
-  socialLogin = asyncHandler(async (_req: Request, res: Response) => {
-    res.status(501).json({ success: false, message: RESPONSE_MESSAGE.NOT_IMPLEMENTED });
+  socialLogin = asyncHandler(async (req: Request, res: Response) => {
+    const {
+      provider,
+      token,
+      fullName,
+      fcmToken,
+      deviceId,
+      deviceName,
+      deviceType,
+      platform,
+      appVersion,
+      osVersion,
+    } = req.body;
+
+    const data = await authenticationService.socialLogin(
+      provider,
+      token,
+      {
+        fcmToken,
+        deviceId,
+        deviceName,
+        deviceType,
+        platform,
+        appVersion,
+        osVersion,
+        ipAddress: req.ip,
+        userAgent: req.headers["user-agent"],
+      },
+      {
+        fullName,
+      },
+    );
+
+    res.status(200).json({
+      success: true,
+      message: RESPONSE_MESSAGE.SOCIAL_LOGIN_SUCCESS,
+      data,
+    });
   });
 
-  refreshToken = asyncHandler(async (_req: Request, res: Response) => {
-    res.status(501).json({ success: false, message: RESPONSE_MESSAGE.NOT_IMPLEMENTED });
+  verifyFirebaseToken = asyncHandler(async (req: Request, res: Response) => {
+    const { token, fcmToken } = req.body;
+
+    const data = await authenticationService.verifyFirebaseToken(
+      token,
+      fcmToken,
+    );
+
+    res.status(200).json({
+      success: true,
+      message: RESPONSE_MESSAGE.FIREBASE_TOKEN_VERIFIED,
+      data,
+    });
   });
 
-  logout = asyncHandler(async (_req: Request, res: Response) => {
-    res.status(501).json({ success: false, message: RESPONSE_MESSAGE.NOT_IMPLEMENTED });
+  refreshToken = asyncHandler(async (req: Request, res: Response) => {
+    const { refreshToken } = req.body;
+
+    const data = await authenticationService.refreshToken(refreshToken);
+
+    res.status(200).json({
+      success: true,
+      message: RESPONSE_MESSAGE.TOKEN_REFRESHED,
+      data,
+    });
+  });
+
+  logout = asyncHandler(async (req: Request, res: Response) => {
+    const { refreshToken } = req.body;
+
+    const data = await authenticationService.logout(refreshToken);
+
+    res.status(200).json({
+      success: true,
+      message: RESPONSE_MESSAGE.LOGGED_OUT,
+      data,
+    });
   });
 }
 

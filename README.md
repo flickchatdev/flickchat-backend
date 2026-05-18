@@ -129,6 +129,18 @@ Edit `.env` and configure:
 ```env
 NODE_ENV=development
 PORT=5000
+
+# JWT access tokens only
+ACCESS_SECRET=replace_with_long_random_secret
+ACCESS_TOKEN_EXPIRES_IN=15m
+
+# Apple SSO
+APPLE_CLIENT_ID=com.your.bundle.id
+
+# Firebase Admin SDK
+FIREBASE_PROJECT_ID=
+FIREBASE_CLIENT_EMAIL=
+FIREBASE_PRIVATE_KEY=
 ```
 
 ### Step 3: Build TypeScript
@@ -187,6 +199,13 @@ Authentication routes are modular and can be extended with:
 - Login
 - Token refresh
 - Logout
+
+Current auth endpoints include:
+
+- `POST /api/auth/social-login` (Apple provider)
+- `POST /api/auth/verify-firebase-token` (Firebase ID token + optional FCM token validation)
+- `POST /api/auth/refresh-token`
+- `POST /api/auth/logout`
 
 ---
 

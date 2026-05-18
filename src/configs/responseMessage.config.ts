@@ -7,12 +7,32 @@ const RESPONSE_MESSAGE = {
 
   OTP_SENT: "OTP sent successfully",
   OTP_VERIFIED: "OTP verified successfully",
+  SOCIAL_LOGIN_SUCCESS: "Social login successful",
+  TOKEN_REFRESHED: "Token refreshed successfully",
+  LOGGED_OUT: "Logged out successfully",
+  FIREBASE_TOKEN_VERIFIED: "Firebase token verified successfully",
   NOT_IMPLEMENTED: "Not implemented",
 
   PHONE_NUMBER_REQUIRED: "phoneNumber is required",
   COUNTRY_CODE_INVALID_TYPE: "countryCode must be a string",
   VERIFICATION_ID_REQUIRED: "verificationId is required",
   OTP_REQUIRED: "otp is required",
+  PROVIDER_REQUIRED: "provider is required",
+  PROVIDER_NOT_SUPPORTED: "provider is not supported",
+  PROVIDER_ALREADY_LINKED: "provider account is already linked to another user",
+  SOCIAL_LINK_PROVIDER_AND_TOKEN_REQUIRED:
+    "provider and token are required to link social login",
+  TOKEN_REQUIRED: "token is required",
+  INVALID_APPLE_IDENTITY_TOKEN: "Invalid Apple identity token",
+  APPLE_CONFIG_MISSING: "Apple configuration is missing",
+  ACCESS_SECRET_MISSING: "Access token signing secret is missing",
+  REFRESH_TOKEN_REQUIRED: "refreshToken is required",
+  INVALID_REFRESH_TOKEN: "Invalid refresh token",
+  SESSION_EXPIRED: "Session expired",
+  USER_NOT_FOUND: "User not found",
+  FIREBASE_CONFIG_MISSING: "Firebase credentials are not configured",
+  INVALID_FIREBASE_TOKEN: "Invalid Firebase token",
+  INVALID_FCM_TOKEN: "Invalid FCM token",
 
   COUNTRY_CODE_REQUIRED:
     "countryCode is required when phone number is not in E.164 format",

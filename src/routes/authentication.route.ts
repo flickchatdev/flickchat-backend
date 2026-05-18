@@ -68,7 +68,68 @@ router.post("/send-otp", authenticationController.sendOtp);
  *         description: Invalid or expired OTP
  */
 router.post("/verify-otp", authenticationController.verifyOtp);
+
+/**
+ * @swagger
+ * /api/auth/social-login:
+ *   post:
+ *     summary: Login using Apple identity token
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [provider, token]
+ *             properties:
+ *               provider:
+ *                 type: string
+ *                 example: apple
+ *               token:
+ *                 type: string
+ *                 example: eyJhbGciOi...
+ *               fullName:
+ *                 type: string
+ *                 example: John Appleseed
+ *               fcmToken:
+ *                 type: string
+ *                 example: e2fR8k:APA91b...
+ *     responses:
+ *       200:
+ *         description: Social login successful
+ */
 router.post("/social-login", authenticationController.socialLogin);
+
+/**
+ * @swagger
+ * /api/auth/verify-firebase-token:
+ *   post:
+ *     summary: Verify Firebase ID token and optional FCM token
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [token]
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 example: eyJhbGciOi...
+ *               fcmToken:
+ *                 type: string
+ *                 example: e2fR8k:APA91b...
+ *     responses:
+ *       200:
+ *         description: Firebase token verified successfully
+ */
+router.post(
+  "/verify-firebase-token",
+  authenticationController.verifyFirebaseToken,
+);
+
 router.post("/refresh-token", authenticationController.refreshToken);
 router.post("/logout", authenticationController.logout);
 
