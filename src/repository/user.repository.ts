@@ -2,6 +2,7 @@ import { AuthProvider, Prisma } from "@prisma/client";
 import prisma from "../prisma/prisma.js";
 import { AppError } from "../errors/AppError.js";
 import { RESPONSE_MESSAGE } from "../configs/index.js";
+import type { GoogleUserPayload } from "../integrations/google/index.js";
 
 class UserRepository {
   findById = async (id: string) => {
@@ -33,6 +34,10 @@ class UserRepository {
         },
       },
     });
+  };
+
+  findByGoogleId = async (googleId: string) => {
+    return this.findByProvider(AuthProvider.GOOGLE, googleId);
   };
 
   findByEmail = async (email: string) => {
@@ -101,6 +106,49 @@ class UserRepository {
         providerId,
         isVerified: true,
       },
+    });
+  };
+
+  createGoogleUser = async (googleUser: GoogleUserPayload, username: string) => {
+    return prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          fullName: googleUser.fullName,
+          username,
+          email: googleUser.email,
+          profilePicture: googleUser.profilePicture,
+        },
+      });
+
+      await tx.userAuthProvider.create({
+        data: {
+          userId: user.id,
+          provider: AuthProvider.GOOGLE,
+          providerId: googleUser.googleId,
+          isVerified: true,
+        },
+      });
+
+      return user;
+    });
+  };
+
+  updateGoogleProfile = async (
+    userId: string,
+    data: Pick<GoogleUserPayload, "fullName" | "email" | "profilePicture">,
+  ) => {
+    const updateData: Prisma.UserUpdateInput = {
+      fullName: data.fullName,
+      profilePicture: data.profilePicture,
+    };
+
+    if (data.email) {
+      updateData.email = data.email;
+    }
+
+    return prisma.user.update({
+      where: { id: userId },
+      data: updateData,
     });
   };
 
