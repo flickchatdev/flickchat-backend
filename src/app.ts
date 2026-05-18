@@ -6,6 +6,8 @@ import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors";
 import path from "path";
+import authenticationRoute from "./routes/authentication.route.js";
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 
@@ -73,5 +75,9 @@ app.get("/health", (_, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+app.use("/api/auth", authenticationRoute);
+
+app.use(errorHandler);
 
 export default app;

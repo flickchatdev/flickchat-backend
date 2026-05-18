@@ -20,8 +20,8 @@ model User {
   gender         Gender?
   dateOfBirth    DateTime?
 
-  email         String?
-  phoneNumber   String
+  email         String?   @unique
+  phoneNumber   String?
 
   isActive       Boolean   @default(true)
   isBlocked      Boolean   @default(false)
