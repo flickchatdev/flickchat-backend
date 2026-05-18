@@ -31,6 +31,14 @@ const RESPONSE_MESSAGE = {
   OTP_EXPIRED: "OTP has expired",
   OTP_RATE_LIMIT: "OTP rate limit reached. Try again later",
   OTP_SERVICE_UNAVAILABLE: "OTP service is temporarily unavailable",
-} as const;
+
+
+  GOOGLE_LOGIN_SUCCESS: "Google login successful",
+  GOOGLE_TOKEN_REQUIRED: "idToken is required",
+  GOOGLE_TOKEN_INVALID: "Invalid or expired Google token",
+  GOOGLE_NOT_CONFIGURED: "Google SSO is not configured on the server",
+  ACCOUNT_BLOCKED: "Your account has been blocked",
+  PROVIDER_NOT_SUPPORTED: "Auth provider is not supported",
+};
 
 export default RESPONSE_MESSAGE;

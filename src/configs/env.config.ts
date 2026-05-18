@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const ENV = {
-  PORT: process.env.PORT || 3000,
+  PORT: Number(process.env.PORT) || 8080,
   NODE_ENV: process.env.NODE_ENV || "development",
   CORS_ORIGIN: process.env.CORS_ORIGIN || "*",
 
@@ -16,6 +16,14 @@ const ENV = {
     process.env.MESSAGE_CENTRAL_DEFAULT_COUNTRY_CODE || "91",
   MESSAGE_CENTRAL_FLOW_TYPE: process.env.MESSAGE_CENTRAL_FLOW_TYPE || "SMS",
   MESSAGE_CENTRAL_OTP_LENGTH: Number(process.env.MESSAGE_CENTRAL_OTP_LENGTH) || 6,
+
+  DATABASE_URL: process.env.DATABASE_URL || "",
+
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
+
+  JWT_SECRET: process.env.JWT_SECRET || "",
+  JWT_ACCESS_EXPIRES_IN: process.env.JWT_ACCESS_EXPIRES_IN || "15m",
+  JWT_REFRESH_EXPIRES_DAYS: Number(process.env.JWT_REFRESH_EXPIRES_DAYS) || 30,
 };
 
 export default ENV;
